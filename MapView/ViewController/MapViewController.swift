@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MapViewController.swift
 //  FindParkingLot
 //
 //  Created by 김재동 on 2023/02/09.
@@ -9,7 +9,7 @@ import UIKit
 import NMapsMap
 import CoreLocation
 
-class LoginViewController: UIViewController, CLLocationManagerDelegate {
+class MapViewController: UIViewController, CLLocationManagerDelegate {
 
     var locationManager = CLLocationManager()
     
