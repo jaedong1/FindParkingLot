@@ -12,8 +12,6 @@ import GoogleSignIn
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
         
@@ -23,33 +21,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         return GIDSignIn.sharedInstance.handle(url)
     }
-    
-//    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-//        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
-//
-//        let config = GIDConfiguration(clientID: clientID)
-//        
-//        let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
-//        let LoginViewController = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
-//        GIDSignIn.sharedInstance.signIn(withPresenting: <#T##UIViewController#>)
-//
-//        if let error = error {
-//            return
-//        }
-//
-//        guard
-//            let authentication = user?.authentication,
-//            let idToken = authentication.idToken
-//        else {
-//            return
-//        }
-//
-//        let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: authentication.accessToken)
-//
-//        let mainViewController = storyboard.instantiateViewController(withIdentifier: "MainViewController")
-//        mainViewController.modalPresentationStyle = .fullScreen
-//        UIApplication.shared.windows.first?.rootViewController?.show(mainViewController, sender: nil)
-//    }
     
     // MARK: UISceneSession Lifecycle
 

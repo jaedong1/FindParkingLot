@@ -130,9 +130,13 @@ class LoginViewController: UIViewController {
     private func googleLoginButtonTapped() {
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
         
-        let config = GIDConfiguration(clientID: clientID)
-        
-        GIDSignIn.sharedInstance.signIn(withPresenting: self)
+        GIDSignIn.sharedInstance.signIn(withPresenting: self) { user, error in
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            
+        }
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
