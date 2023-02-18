@@ -23,30 +23,30 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         
-        if CLLocationManager.locationServicesEnabled() {
-            print("위치 서비스 on")
-            locationManager.startUpdatingLocation()
-            print(locationManager.location?.coordinate as Any)
-            
-            let cameraUpdate = NMFCameraUpdate(
-                scrollTo: NMGLatLng(
-//                    lat: locationManager.location?.coordinate.latitude ?? 0,
-//                    lng: locationManager.location?.coordinate.longitude ?? 0))
-                    lat: 37.5670135, lng: 126.9783740))
-            
-            cameraUpdate.animation = .easeIn
-            mapView.moveCamera(cameraUpdate)
-        } else {
-            print("위치 서비스 off")
+        DispatchQueue.global().async {
+            if CLLocationManager.locationServicesEnabled() {
+                print("위치 서비스 on")
+                self.locationManager.startUpdatingLocation()
+                print(self.locationManager.location?.coordinate as Any)
+                
+                let cameraUpdate = NMFCameraUpdate(
+                    scrollTo: NMGLatLng(
+                        lat: self.locationManager.location?.coordinate.latitude ?? 0,
+                        lng: self.locationManager.location?.coordinate.longitude ?? 0))
+                
+                cameraUpdate.animation = .easeIn
+                mapView.moveCamera(cameraUpdate)
+            } else {
+                print("위치 서비스 off")
+            }
         }
         
         let locationOverlay = mapView.locationOverlay
         
         locationOverlay.hidden = false
         locationOverlay.location = NMGLatLng(
-//            lat: locationManager.location?.coordinate.latitude ?? 0,
-//            lng: locationManager.location?.coordinate.longitude ?? 0)
-            lat: 37.5670135, lng: 126.9783740)
+            lat: locationManager.location?.coordinate.latitude ?? 0,
+            lng: locationManager.location?.coordinate.longitude ?? 0)
 
         locationOverlay.iconWidth = 100
         locationOverlay.iconHeight = 100

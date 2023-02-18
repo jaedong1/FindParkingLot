@@ -55,19 +55,21 @@ class LoginViewController: UIViewController {
     
     private lazy var emailLoginButton: UIButton = {
         let button = UIButton()
+        var config = UIButton.Configuration.filled()
         
-        button.layer.cornerRadius = 15
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.white.cgColor
+        config.background.strokeWidth = 1
+        config.background.strokeColor = .white
+        config.background.cornerRadius = 15
         
-        button.setTitle("이메일/비밀번호로 계속하기", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
-        button.setTitleColor(.white, for: .normal)
+        config.background.backgroundColor = .gray
         
-        button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 50, bottom: 5, right: 50)
+        config.title = "이메일/비밀번호로 계속하기"
+        config.attributedTitle?.font = .systemFont(ofSize: 15, weight: .bold)
+        config.attributedTitle?.foregroundColor = .white
         
-        button.backgroundColor = .gray
+        config.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 50, bottom: 5, trailing: 50)
         
+        button.configuration = config
         button.addTarget(self, action: #selector(emailLoginButtonTapped), for: .touchUpInside)
         
         return button
@@ -75,23 +77,24 @@ class LoginViewController: UIViewController {
     
     private lazy var googleLoginButton: UIButton = {
         let button = UIButton()
+        var config = UIButton.Configuration.filled()
         
-        button.layer.cornerRadius = 15
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.white.cgColor
+        config.background.strokeWidth = 1
+        config.background.strokeColor = .white
+        config.background.cornerRadius = 15
         
-        button.setTitle("Google로 계속하기", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
-        button.setTitleColor(.white, for: .normal)
+        config.background.backgroundColor = .gray
         
-        button.setImage(UIImage(named: "logo_google"), for: .normal)
-        button.imageView?.contentMode = .scaleAspectFit
+        config.title = "Google로 계속하기"
+        config.attributedTitle?.font = .systemFont(ofSize: 15, weight: .bold)
+        config.attributedTitle?.foregroundColor = .white
         
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -50, bottom: 0, right: 0)
-        button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 55, bottom: 5, right: 55)
+        config.image = UIImage(named: "logo_google")
         
-        button.backgroundColor = .gray
+        config.imagePadding = 30
+        config.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 30, bottom: 5, trailing: 50)
         
+        button.configuration = config
         button.addTarget(self, action: #selector(googleLoginButtonTapped), for: .touchUpInside)
         
         return button
@@ -99,31 +102,31 @@ class LoginViewController: UIViewController {
     
     private lazy var appleLoginButton: UIButton = {
         let button = UIButton()
+        var config = UIButton.Configuration.filled()
         
-        button.layer.cornerRadius = 15
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.white.cgColor
+        config.background.strokeWidth = 1
+        config.background.strokeColor = .white
+        config.background.cornerRadius = 15
         
-        button.setTitle("Apple로 계속하기", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
-        button.setTitleColor(.white, for: .normal)
+        config.background.backgroundColor = .gray
         
-        button.setImage(UIImage(named: "logo_apple"), for: .normal)
-        button.imageView?.contentMode = .scaleAspectFit
+        config.title = "Apple로 계속하기"
+        config.attributedTitle?.font = .systemFont(ofSize: 15, weight: .bold)
+        config.attributedTitle?.foregroundColor = .white
         
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -60, bottom: 0, right: 0)
-        button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 60, bottom: 5, right: 60)
+        config.image = UIImage(named: "logo_apple")
         
-        button.backgroundColor = .gray
+        config.imagePadding = 30
+        config.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 30, bottom: 5, trailing: 55)
+        
+        button.configuration = config
         
         return button
     }()
     
     @objc
     private func emailLoginButtonTapped() {
-        let emailViewController = EmailViewController()
-
-        self.navigationController?.pushViewController(emailViewController, animated: true)
+        self.showEmailViewController()
     }
     
     @objc
@@ -134,18 +137,30 @@ class LoginViewController: UIViewController {
                 return
             }
             
-            guard let signInResult = signInResult else { return }
+//            guard let signInResult = signInResult else { return }
 
-            let user = signInResult.user
-
-            let emailAddress = user.profile?.email
-
-            let fullName = user.profile?.name
-            let givenName = user.profile?.givenName
-            let familyName = user.profile?.familyName
-
-            let profilePicUrl = user.profile?.imageURL(withDimension: 320)
+//            let user = signInResult.user
+//
+//            let emailAddress = user.profile?.email
+//
+//            let fullName = user.profile?.name
+//            let givenName = user.profile?.givenName
+//            let familyName = user.profile?.familyName
+//
+//            let profilePicUrl = user.profile?.imageURL(withDimension: 320)
+            
+            self.showMapViewController()
         }
+    }
+    
+    private func showEmailViewController() {
+        let emailViewController = EmailViewController()
+        self.navigationController?.pushViewController(emailViewController, animated: true)
+    }
+    
+    private func showMapViewController() {
+        let mapViewController = MapViewController()
+        self.navigationController?.pushViewController(mapViewController, animated: true)
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
