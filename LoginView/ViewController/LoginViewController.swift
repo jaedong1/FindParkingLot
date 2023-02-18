@@ -128,14 +128,23 @@ class LoginViewController: UIViewController {
     
     @objc
     private func googleLoginButtonTapped() {
-        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
-        
-        GIDSignIn.sharedInstance.signIn(withPresenting: self) { user, error in
-            if let error = error {
-                print(error.localizedDescription)
+        GIDSignIn.sharedInstance.signIn(withPresenting: self) { signInResult, error in
+            guard error == nil else {
+                print(error?.localizedDescription ?? "error")
                 return
             }
             
+            guard let signInResult = signInResult else { return }
+
+            let user = signInResult.user
+
+            let emailAddress = user.profile?.email
+
+            let fullName = user.profile?.name
+            let givenName = user.profile?.givenName
+            let familyName = user.profile?.familyName
+
+            let profilePicUrl = user.profile?.imageURL(withDimension: 320)
         }
     }
     
