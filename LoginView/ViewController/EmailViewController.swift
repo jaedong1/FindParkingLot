@@ -41,8 +41,13 @@ class EmailViewController: UIViewController {
         textField.becomeFirstResponder()
         textField.backgroundColor = .white
         
-        textField.font = .systemFont(ofSize: 25, weight: .regular)
+        textField.font = .systemFont(ofSize: 20, weight: .regular)
         textField.textColor = .black
+        
+        textField.borderStyle = .roundedRect
+        textField.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        textField.addTarget(self, action: #selector(checkEmailAndPassword), for: .editingChanged)
         
         return textField
     }()
@@ -61,13 +66,18 @@ class EmailViewController: UIViewController {
     private lazy var passwordTextField: UITextField = {
         let textField = UITextField()
         
+        textField.isSecureTextEntry = true
+        
         textField.delegate = self
         textField.backgroundColor = .white
         
-        textField.font = .systemFont(ofSize: 25, weight: .regular)
+        textField.font = .systemFont(ofSize: 20, weight: .regular)
         textField.textColor = .black
         
-        textField.isSecureTextEntry = true
+        textField.borderStyle = .roundedRect
+        textField.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        textField.addTarget(self, action: #selector(checkEmailAndPassword), for: .editingChanged)
         
         return textField
     }()
@@ -89,7 +99,7 @@ class EmailViewController: UIViewController {
         
         config.title = "다음"
         config.attributedTitle?.font = .systemFont(ofSize: 20, weight: .bold)
-        config.attributedTitle?.foregroundColor = .black
+        config.attributedTitle?.foregroundColor = .gray
         
         config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20)
         
@@ -208,13 +218,22 @@ class EmailViewController: UIViewController {
     }
 }
 
-extension EmailViewController: UITextFieldDelegate {    
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+extension EmailViewController: UITextFieldDelegate {
+    @objc private func checkEmailAndPassword() {
         let isEmailEmpty = emailTextField.text == ""
         let isPasswordEmpty = passwordTextField.text == ""
         
         nextButton.isEnabled = !isEmailEmpty && !isPasswordEmpty
         
+        if(nextButton.isEnabled) {
+            nextButton.configuration?.attributedTitle?.foregroundColor = .black
+        } else {
+            nextButton.configuration?.attributedTitle?.foregroundColor = .gray
+        }
+    }
+    
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        checkEmailAndPassword()
         return true
     }
 }

@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+      "filename" : "kakao_login_medium_narrow.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -9,7 +10,6 @@
       "scale" : "2x"
     },
     {
-      "filename" : "logo_apple.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

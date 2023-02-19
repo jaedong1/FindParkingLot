@@ -2,8 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>GIDClientID</key>
-	<string>1030502134603-dag97gj8fmshc0tujch6gk4lpqn1bncb.apps.googleusercontent.com</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>kakaokompassauth</string>
+		<string>kakaolink</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -12,7 +15,15 @@
 				<string>com.googleusercontent.apps.1030502134603-dag97gj8fmshc0tujch6gk4lpqn1bncb</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakaod5a03e8cf83011419da06a060996c185</string>
+			</array>
+		</dict>
 	</array>
+	<key>GIDClientID</key>
+	<string>1030502134603-dag97gj8fmshc0tujch6gk4lpqn1bncb.apps.googleusercontent.com</string>
 	<key>NMFClientId</key>
 	<string>jo8xte3m9n</string>
 	<key>UIApplicationSceneManifest</key>

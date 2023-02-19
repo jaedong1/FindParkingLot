@@ -9,6 +9,9 @@ import UIKit
 import SnapKit
 import Firebase
 import GoogleSignIn
+import KakaoSDKCommon
+import KakaoSDKAuth
+import KakaoSDKUser
 
 class LoginViewController: UIViewController {
     private lazy var infoStackView: UIStackView = {
@@ -17,16 +20,16 @@ class LoginViewController: UIViewController {
         stackView.axis = .vertical
         stackView.spacing = 25
         stackView.alignment = .center
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fill
         
         return stackView
     }()
     
     private lazy var parkingIcon: UIImageView = {
-        let imageView = UIImageView(image: UIImage(systemName: "parkingsign.circle.fill"))
+        let imageView = UIImageView(image: UIImage(named: "logo_parkingLot"))
         
         imageView.contentMode = .scaleAspectFit
-        imageView.frame.size = CGSize(width: 50, height: 50)        
+        imageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
         
         return imageView
     }()
@@ -34,7 +37,8 @@ class LoginViewController: UIViewController {
     private lazy var loginLabel: UILabel = {
         let label = UILabel()
         
-        label.text = "회원가입하여 주변 주차장 찾기!"
+        label.text = "회원가입하여 주변 주차장을 찾으세요!"
+        label.numberOfLines = 0
         label.textColor = .white
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 20, weight: .bold)
@@ -100,7 +104,7 @@ class LoginViewController: UIViewController {
         return button
     }()
     
-    private lazy var appleLoginButton: UIButton = {
+    private lazy var kakaoLoginButton: UIButton = {
         let button = UIButton()
         var config = UIButton.Configuration.filled()
         
@@ -110,20 +114,41 @@ class LoginViewController: UIViewController {
         
         config.background.backgroundColor = .gray
         
-        config.title = "Apple로 계속하기"
+        config.title = "Kakao로 계속하기"
         config.attributedTitle?.font = .systemFont(ofSize: 15, weight: .bold)
         config.attributedTitle?.foregroundColor = .white
         
-        config.image = UIImage(named: "logo_apple")
+        config.image = UIImage(named: "logo_kakaoTalk")
         
-        config.imagePadding = 30
-        config.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 30, bottom: 5, trailing: 55)
+        config.imagePadding = 35
+        config.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 31, bottom: 5, trailing: 55)
         
         button.configuration = config
+        button.addTarget(self, action: #selector(kakaoLoginButtonTapped), for: .touchUpInside)
         
         return button
     }()
     
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        
+        attribute()
+        layout()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        view.backgroundColor = .black
+        navigationController?.navigationBar.isHidden = true
+    }
+}
+
+extension LoginViewController {
     @objc
     private func emailLoginButtonTapped() {
         self.showEmailViewController()
@@ -153,6 +178,35 @@ class LoginViewController: UIViewController {
         }
     }
     
+    @objc
+    private func kakaoLoginButtonTapped() {
+        if (UserApi.isKakaoTalkLoginAvailable()) {
+            UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
+                if let error = error {
+                    print(error)
+                }
+                else {
+                    print("loginWithKakaoTalk() success.")
+
+                    //do something
+                    _ = oauthToken
+                }
+            }
+        } else {
+            UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
+               if let error = error {
+                 print(error)
+               }
+               else {
+                print("loginWithKakaoAccount() success.")
+                
+                //do something
+                _ = oauthToken
+               }
+            }
+        }
+    }
+    
     private func showEmailViewController() {
         let emailViewController = EmailViewController()
         self.navigationController?.pushViewController(emailViewController, animated: true)
@@ -161,24 +215,6 @@ class LoginViewController: UIViewController {
     private func showMapViewController() {
         let mapViewController = MapViewController()
         self.navigationController?.pushViewController(mapViewController, animated: true)
-    }
-    
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        
-        attribute()
-        layout()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        view.backgroundColor = .black
-        navigationController?.navigationBar.isHidden = true
     }
     
     private func attribute() {
@@ -194,7 +230,7 @@ class LoginViewController: UIViewController {
         [
             emailLoginButton,
             googleLoginButton,
-            appleLoginButton
+            kakaoLoginButton
         ].forEach { loginStackView.addArrangedSubview($0) }
         
         [
@@ -204,13 +240,13 @@ class LoginViewController: UIViewController {
         
         infoStackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(300)
-            $0.leading.equalToSuperview().offset(50)
+            $0.top.equalToSuperview().offset(150)
+            $0.leading.equalToSuperview().offset(0)
         }
         
         loginStackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(infoStackView.snp.bottom).offset(70)
+            $0.top.equalTo(infoStackView.snp.bottom).offset(50)
             $0.leading.equalTo(infoStackView)
         }
     }

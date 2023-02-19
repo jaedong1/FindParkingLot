@@ -8,6 +8,7 @@
 import UIKit
 import Firebase
 import GoogleSignIn
+import KakaoSDKCommon
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -22,6 +23,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 // Show the app's signed-in state.
             }
         }
+        
+        KakaoSDK.initSDK(appKey: "d5a03e8cf83011419da06a060996c185")
+        
         return true
     }
 
