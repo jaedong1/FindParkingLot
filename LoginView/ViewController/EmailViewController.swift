@@ -25,7 +25,7 @@ class EmailViewController: UIViewController {
         let label = UILabel()
         
         label.text = "이메일 주소가 무엇인가요?"
-        label.textColor = .white
+        label.textColor = .black
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 20, weight: .bold)
         
@@ -56,7 +56,7 @@ class EmailViewController: UIViewController {
         let label = UILabel()
         
         label.text = "비밀번호를 입력해주세요."
-        label.textColor = .white
+        label.textColor = .black
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 20, weight: .bold)
         
@@ -167,7 +167,7 @@ class EmailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        view.backgroundColor = .black
+        view.backgroundColor = .white
         navigationController?.navigationBar.isHidden = false
     }
     
@@ -207,7 +207,7 @@ class EmailViewController: UIViewController {
         
         stackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(150)
+            $0.top.equalToSuperview().offset(125)
             $0.leading.equalToSuperview().offset(25)
         }
         

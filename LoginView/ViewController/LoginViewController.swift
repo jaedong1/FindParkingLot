@@ -13,7 +13,12 @@ import KakaoSDKCommon
 import KakaoSDKAuth
 import KakaoSDKUser
 
+import Alamofire /***************************/
+
 class LoginViewController: UIViewController {
+    private let serviceKey = "vriVsoVANzAPR4GWiHqTmd5PhcEuOswMLcSIytT9pQQs4mVeRjivO%2FlnmIZFacxbC3yDvy9a3rWR0%2B8J%2FOb1GA%3D%3D"
+    private var numOfRows = 14000
+    /***************************/
     private lazy var infoStackView: UIStackView = {
         let stackView = UIStackView()
         
@@ -39,7 +44,7 @@ class LoginViewController: UIViewController {
         
         label.text = "회원가입하여 주변 주차장을 찾으세요!"
         label.numberOfLines = 0
-        label.textColor = .white
+        label.textColor = .black
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 20, weight: .bold)
         
@@ -50,9 +55,9 @@ class LoginViewController: UIViewController {
         let stackView = UIStackView()
         
         stackView.axis = .vertical
-        stackView.spacing = 25
+        stackView.spacing = 20
         stackView.alignment = .center
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fill
         
         return stackView
     }()
@@ -61,19 +66,27 @@ class LoginViewController: UIViewController {
         let button = UIButton()
         var config = UIButton.Configuration.filled()
         
-        config.background.strokeWidth = 1
-        config.background.strokeColor = .white
-        config.background.cornerRadius = 15
+        config.background.cornerRadius = 5
+        config.background.backgroundColor = .lightGray
         
-        config.background.backgroundColor = .gray
+        config.title = "이메일로 로그인"
+        config.attributedTitle?.font = .systemFont(ofSize: 15, weight: .regular)
+        config.attributedTitle?.foregroundColor = .black
         
-        config.title = "이메일/비밀번호로 계속하기"
-        config.attributedTitle?.font = .systemFont(ofSize: 15, weight: .bold)
-        config.attributedTitle?.foregroundColor = .white
+        config.image = UIImage(systemName: "envelope.fill")
         
-        config.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 50, bottom: 5, trailing: 50)
+        config.imagePadding = 50
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 60)
         
         button.configuration = config
+        
+        button.layer.shadowRadius = 5
+        button.layer.shadowOpacity = 0.3
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 4, height: 4)
+        
+        button.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
         button.addTarget(self, action: #selector(emailLoginButtonTapped), for: .touchUpInside)
         
         return button
@@ -83,22 +96,27 @@ class LoginViewController: UIViewController {
         let button = UIButton()
         var config = UIButton.Configuration.filled()
         
-        config.background.strokeWidth = 1
-        config.background.strokeColor = .white
-        config.background.cornerRadius = 15
+        config.background.cornerRadius = 5
+        config.background.backgroundColor = .white
         
-        config.background.backgroundColor = .gray
-        
-        config.title = "Google로 계속하기"
-        config.attributedTitle?.font = .systemFont(ofSize: 15, weight: .bold)
-        config.attributedTitle?.foregroundColor = .white
+        config.title = "Google 로그인"
+        config.attributedTitle?.font = .systemFont(ofSize: 15, weight: .regular)
+        config.attributedTitle?.foregroundColor = .black
         
         config.image = UIImage(named: "logo_google")
         
-        config.imagePadding = 30
-        config.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 30, bottom: 5, trailing: 50)
+        config.imagePadding = 52
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 62)
         
         button.configuration = config
+        
+        button.layer.shadowRadius = 5
+        button.layer.shadowOpacity = 0.3
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 4, height: 4)
+        
+        button.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
         button.addTarget(self, action: #selector(googleLoginButtonTapped), for: .touchUpInside)
         
         return button
@@ -107,25 +125,30 @@ class LoginViewController: UIViewController {
     private lazy var kakaoLoginButton: UIButton = {
         let button = UIButton()
         var config = UIButton.Configuration.filled()
-        
-        config.background.strokeWidth = 1
-        config.background.strokeColor = .white
-        config.background.cornerRadius = 15
-        
-        config.background.backgroundColor = .gray
-        
-        config.title = "Kakao로 계속하기"
-        config.attributedTitle?.font = .systemFont(ofSize: 15, weight: .bold)
-        config.attributedTitle?.foregroundColor = .white
-        
-        config.image = UIImage(named: "logo_kakaoTalk")
-        
-        config.imagePadding = 35
-        config.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 31, bottom: 5, trailing: 55)
-        
+
+        config.background.cornerRadius = 5
+        config.background.backgroundColor = UIColor(named: "KakaoLoginButton")
+
+        config.title = "카카오 로그인"
+        config.attributedTitle?.font = .systemFont(ofSize: 15, weight: .regular)
+        config.attributedTitle?.foregroundColor = .black
+
+        config.image = UIImage(named: "logo_kakao")
+
+        config.imagePadding = 55
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 66)
+
         button.configuration = config
-        button.addTarget(self, action: #selector(kakaoLoginButtonTapped), for: .touchUpInside)
         
+        button.layer.shadowRadius = 5
+        button.layer.shadowOpacity = 0.3
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 4, height: 4)
+        
+        button.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        button.addTarget(self, action: #selector(kakaoLoginButtonTapped), for: .touchUpInside)
+
         return button
     }()
     
@@ -143,8 +166,18 @@ class LoginViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        view.backgroundColor = .black
+        view.backgroundColor = .white
         navigationController?.navigationBar.isHidden = true
+        
+        let url = "http://api.data.go.kr/openapi/tn_pubr_prkplce_info_api?serviceKey=\(serviceKey)&pageNo=0&numOfRows=\(numOfRows)&type=json"
+        print(url)
+        
+        AF.request(url)
+            .validate()
+            .responseDecodable(of: ParkingLotDataModel.self) { response in
+                guard case .success(let data) = response.result else { return }
+                print(data)
+            }
     }
 }
 
@@ -190,18 +223,22 @@ extension LoginViewController {
 
                     //do something
                     _ = oauthToken
+                    
+                    self.showMapViewController()
                 }
             }
         } else {
             UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
                if let error = error {
-                 print(error)
+                   print(error)
                }
                else {
-                print("loginWithKakaoAccount() success.")
+                   print("loginWithKakaoAccount() success.")
                 
-                //do something
-                _ = oauthToken
+                   //do something
+                   _ = oauthToken
+                   
+                   self.showMapViewController()
                }
             }
         }
@@ -240,7 +277,7 @@ extension LoginViewController {
         
         infoStackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(150)
+            $0.top.equalToSuperview().offset(200)
             $0.leading.equalToSuperview().offset(0)
         }
         
