@@ -8,12 +8,18 @@
 import Foundation
 
 struct item: Decodable {
-    let name: String
-    let type: String
-    let address: String
-    let phoneNumber: String
-    let lat: String
-    let lng: String
+//    let name: String
+//    let type: String
+//    let address: String
+//    let phoneNumber: String
+//    let lat: String
+//    let lng: String
+    var name: String
+    var type: String
+    var address: String
+    var phoneNumber: String
+    var lat: String
+    var lng: String
     
     enum CodingKeys: String, CodingKey {
         case name = "prkplceNm"
@@ -26,27 +32,27 @@ struct item: Decodable {
 }
 
 struct items: Decodable {
-    let all: [item]
+    let items: [item]
     let totalCount: String
     
     enum CodingKeys: String, CodingKey {
-        case all = "items"
+        case items
         case totalCount
     }
 }
 
 struct body: Decodable {
-    let all: items
+    let body: items
     
     enum CodingKeys: String, CodingKey {
-        case all = "body"
+        case body
     }
 }
 
 struct ParkingLotDataModel: Decodable {
-    let all: body
+    let response: body
     
     enum CodingKeys: String, CodingKey {
-        case all = "response"
+        case response
     }
 }

@@ -13,12 +13,7 @@ import KakaoSDKCommon
 import KakaoSDKAuth
 import KakaoSDKUser
 
-import Alamofire /***************************/
-
 class LoginViewController: UIViewController {
-    private let serviceKey = "vriVsoVANzAPR4GWiHqTmd5PhcEuOswMLcSIytT9pQQs4mVeRjivO%2FlnmIZFacxbC3yDvy9a3rWR0%2B8J%2FOb1GA%3D%3D"
-    private var numOfRows = 14000
-    /***************************/
     private lazy var infoStackView: UIStackView = {
         let stackView = UIStackView()
         
@@ -168,16 +163,6 @@ class LoginViewController: UIViewController {
         
         view.backgroundColor = .white
         navigationController?.navigationBar.isHidden = true
-        
-        let url = "http://api.data.go.kr/openapi/tn_pubr_prkplce_info_api?serviceKey=\(serviceKey)&pageNo=0&numOfRows=\(numOfRows)&type=json"
-        print(url)
-        
-        AF.request(url)
-            .validate()
-            .responseDecodable(of: ParkingLotDataModel.self) { response in
-                guard case .success(let data) = response.result else { return }
-                print(data)
-            }
     }
 }
 
