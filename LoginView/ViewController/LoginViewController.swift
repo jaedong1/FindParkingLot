@@ -18,7 +18,7 @@ class LoginViewController: UIViewController {
         let stackView = UIStackView()
         
         stackView.axis = .vertical
-        stackView.spacing = 25
+        stackView.spacing = 15
         stackView.alignment = .center
         stackView.distribution = .fill
         
@@ -29,7 +29,7 @@ class LoginViewController: UIViewController {
         let imageView = UIImageView(image: UIImage(named: "logo_parkingLot"))
         
         imageView.contentMode = .scaleAspectFit
-        imageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 40).isActive = true
         
         return imageView
     }()
@@ -37,11 +37,25 @@ class LoginViewController: UIViewController {
     private lazy var loginLabel: UILabel = {
         let label = UILabel()
         
-        label.text = "회원가입하여 주변 주차장을 찾으세요!"
+        label.text = "간편 로그인"
         label.numberOfLines = 0
         label.textColor = .black
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.font = .systemFont(ofSize: 25, weight: .semibold)
+        
+        return label
+    }()
+    
+    private lazy var descriptionLabel: UILabel = {
+        let label = UILabel()
+        
+        label.text = "자주 사용하는 아이디로 간편하게 주차장 찾기 서비스에 가입하실 수 있습니다."
+        label.numberOfLines = 0
+        label.textColor = .black
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 12, weight: .regular)
+        
+        label.widthAnchor.constraint(equalToConstant: 300).isActive = true
         
         return label
     }()
@@ -50,7 +64,7 @@ class LoginViewController: UIViewController {
         let stackView = UIStackView()
         
         stackView.axis = .vertical
-        stackView.spacing = 20
+        stackView.spacing = 10
         stackView.alignment = .center
         stackView.distribution = .fill
         
@@ -64,14 +78,14 @@ class LoginViewController: UIViewController {
         config.background.cornerRadius = 5
         config.background.backgroundColor = .lightGray
         
-        config.title = "이메일로 로그인"
+        config.title = "이메일로 계속하기"
         config.attributedTitle?.font = .systemFont(ofSize: 15, weight: .regular)
         config.attributedTitle?.foregroundColor = .black
         
         config.image = UIImage(systemName: "envelope.fill")
         
-        config.imagePadding = 50
-        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 60)
+        config.imagePadding = 55
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 82)
         
         button.configuration = config
         
@@ -80,6 +94,7 @@ class LoginViewController: UIViewController {
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOffset = CGSize(width: 4, height: 4)
         
+        button.widthAnchor.constraint(equalToConstant: 300).isActive = true
         button.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         button.addTarget(self, action: #selector(emailLoginButtonTapped), for: .touchUpInside)
@@ -94,14 +109,14 @@ class LoginViewController: UIViewController {
         config.background.cornerRadius = 5
         config.background.backgroundColor = .white
         
-        config.title = "Google 로그인"
+        config.title = "Google 계속하기"
         config.attributedTitle?.font = .systemFont(ofSize: 15, weight: .regular)
         config.attributedTitle?.foregroundColor = .black
         
         config.image = UIImage(named: "logo_google")
         
-        config.imagePadding = 52
-        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 62)
+        config.imagePadding = 61
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 79)
         
         button.configuration = config
         
@@ -110,6 +125,7 @@ class LoginViewController: UIViewController {
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOffset = CGSize(width: 4, height: 4)
         
+        button.widthAnchor.constraint(equalToConstant: 300).isActive = true
         button.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         button.addTarget(self, action: #selector(googleLoginButtonTapped), for: .touchUpInside)
@@ -124,14 +140,14 @@ class LoginViewController: UIViewController {
         config.background.cornerRadius = 5
         config.background.backgroundColor = UIColor(named: "KakaoLoginButton")
 
-        config.title = "카카오 로그인"
+        config.title = "카카오로 계속하기"
         config.attributedTitle?.font = .systemFont(ofSize: 15, weight: .regular)
         config.attributedTitle?.foregroundColor = .black
 
         config.image = UIImage(named: "logo_kakao")
 
-        config.imagePadding = 55
-        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 66)
+        config.imagePadding = 57
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 78)
 
         button.configuration = config
         
@@ -140,6 +156,7 @@ class LoginViewController: UIViewController {
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOffset = CGSize(width: 4, height: 4)
         
+        button.widthAnchor.constraint(equalToConstant: 300).isActive = true
         button.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         button.addTarget(self, action: #selector(kakaoLoginButtonTapped), for: .touchUpInside)
@@ -246,7 +263,8 @@ extension LoginViewController {
     private func layout() {
         [
             parkingIcon,
-            loginLabel
+            loginLabel,
+            descriptionLabel
         ].forEach { infoStackView.addArrangedSubview($0) }
         
         [
@@ -262,13 +280,13 @@ extension LoginViewController {
         
         infoStackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(200)
-            $0.leading.equalToSuperview().offset(0)
+            $0.top.equalToSuperview().offset(250)
+            $0.leading.equalToSuperview()
         }
         
         loginStackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(infoStackView.snp.bottom).offset(50)
+            $0.top.equalTo(infoStackView.snp.bottom).offset(20)
             $0.leading.equalTo(infoStackView)
         }
     }
