@@ -22,6 +22,8 @@ class LoadingViewController: UIViewController {
     private lazy var LoadingIndicatorView: UIActivityIndicatorView = {
         let IndicatorView = UIActivityIndicatorView(style: .large)
         
+        IndicatorView.color = .black
+        
         return IndicatorView
     }()
     
@@ -115,7 +117,7 @@ extension LoadingViewController {
     
     
     private func showLoginViewController() {
-        let LoginViewController = LoginViewController()
+        let LoginViewController = LoginViewController(parkingLots: parkingLots)
         self.navigationController?.pushViewController(LoginViewController, animated: true)
     }
 }

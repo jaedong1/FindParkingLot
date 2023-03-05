@@ -14,11 +14,13 @@ import KakaoSDKAuth
 import KakaoSDKUser
 
 class LoginViewController: UIViewController {
+    let parkingLots: [item]
+    
     private lazy var infoStackView: UIStackView = {
         let stackView = UIStackView()
         
         stackView.axis = .vertical
-        stackView.spacing = 15
+        stackView.spacing = 10
         stackView.alignment = .center
         stackView.distribution = .fill
         
@@ -53,7 +55,7 @@ class LoginViewController: UIViewController {
         label.numberOfLines = 0
         label.textColor = .black
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.font = .systemFont(ofSize: 15, weight: .regular)
         
         label.widthAnchor.constraint(equalToConstant: 300).isActive = true
         
@@ -75,7 +77,7 @@ class LoginViewController: UIViewController {
         let button = UIButton()
         var config = UIButton.Configuration.filled()
         
-        config.background.cornerRadius = 5
+        config.background.cornerRadius = 10
         config.background.backgroundColor = .lightGray
         
         config.title = "이메일로 계속하기"
@@ -84,8 +86,8 @@ class LoginViewController: UIViewController {
         
         config.image = UIImage(systemName: "envelope.fill")
         
-        config.imagePadding = 55
-        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 82)
+        config.imagePadding = 60
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 77)
         
         button.configuration = config
         
@@ -106,7 +108,7 @@ class LoginViewController: UIViewController {
         let button = UIButton()
         var config = UIButton.Configuration.filled()
         
-        config.background.cornerRadius = 5
+        config.background.cornerRadius = 10
         config.background.backgroundColor = .white
         
         config.title = "Google 계속하기"
@@ -115,8 +117,8 @@ class LoginViewController: UIViewController {
         
         config.image = UIImage(named: "logo_google")
         
-        config.imagePadding = 61
-        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 79)
+        config.imagePadding = 66
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 74)
         
         button.configuration = config
         
@@ -137,7 +139,7 @@ class LoginViewController: UIViewController {
         let button = UIButton()
         var config = UIButton.Configuration.filled()
 
-        config.background.cornerRadius = 5
+        config.background.cornerRadius = 10
         config.background.backgroundColor = UIColor(named: "KakaoLoginButton")
 
         config.title = "카카오로 계속하기"
@@ -146,8 +148,8 @@ class LoginViewController: UIViewController {
 
         config.image = UIImage(named: "logo_kakao")
 
-        config.imagePadding = 57
-        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 78)
+        config.imagePadding = 62
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 73)
 
         button.configuration = config
         
@@ -164,8 +166,10 @@ class LoginViewController: UIViewController {
         return button
     }()
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    init(parkingLots: [item]) {
+        self.parkingLots = parkingLots
+        
+        super.init(nibName: nil, bundle: nil)
         
         attribute()
         layout()
@@ -247,12 +251,12 @@ extension LoginViewController {
     }
     
     private func showEmailViewController() {
-        let emailViewController = EmailViewController()
+        let emailViewController = EmailViewController(parkingLots: parkingLots)
         self.navigationController?.pushViewController(emailViewController, animated: true)
     }
     
     private func showMapViewController() {
-        let mapViewController = MapViewController()
+        let mapViewController = MapViewController(parkingLots: parkingLots)
         self.navigationController?.pushViewController(mapViewController, animated: true)
     }
     
@@ -280,13 +284,13 @@ extension LoginViewController {
         
         infoStackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(250)
+            $0.top.equalToSuperview().offset(225)
             $0.leading.equalToSuperview()
         }
         
         loginStackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(infoStackView.snp.bottom).offset(20)
+            $0.top.equalTo(infoStackView.snp.bottom).offset(200)
             $0.leading.equalTo(infoStackView)
         }
     }

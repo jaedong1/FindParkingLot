@@ -10,6 +10,8 @@ import FirebaseAuth
 import SnapKit
 
 class EmailViewController: UIViewController {
+    let parkingLots: [item]
+    
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         
@@ -145,12 +147,14 @@ class EmailViewController: UIViewController {
     }
     
     private func showMapViewController() {
-        let mapViewController = MapViewController()
+        let mapViewController = MapViewController(parkingLots: parkingLots)
         self.navigationController?.pushViewController(mapViewController, animated: true)
     }
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    init(parkingLots: [item]) {
+        self.parkingLots = parkingLots
+        
+        super.init(nibName: nil, bundle: nil)
         
         attribute()
         layout()
