@@ -148,7 +148,7 @@ class EmailViewController: UIViewController {
     
     private func showMapViewController() {
         let mapViewController = MapViewController(parkingLots: parkingLots)
-        self.navigationController?.pushViewController(mapViewController, animated: true)
+        navigationController?.pushViewController(mapViewController, animated: true)
     }
     
     init(parkingLots: [item]) {

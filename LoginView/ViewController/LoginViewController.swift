@@ -190,7 +190,7 @@ class LoginViewController: UIViewController {
 extension LoginViewController {
     @objc
     private func emailLoginButtonTapped() {
-        self.showEmailViewController()
+        showEmailViewController()
     }
     
     @objc
@@ -252,12 +252,12 @@ extension LoginViewController {
     
     private func showEmailViewController() {
         let emailViewController = EmailViewController(parkingLots: parkingLots)
-        self.navigationController?.pushViewController(emailViewController, animated: true)
+        navigationController?.pushViewController(emailViewController, animated: true)
     }
     
     private func showMapViewController() {
         let mapViewController = MapViewController(parkingLots: parkingLots)
-        self.navigationController?.pushViewController(mapViewController, animated: true)
+        navigationController?.pushViewController(mapViewController, animated: true)
     }
     
     private func attribute() {

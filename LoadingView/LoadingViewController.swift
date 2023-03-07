@@ -77,19 +77,8 @@ extension LoadingViewController {
         LoadingIndicatorView.startAnimating()
     }
     
-//    private func requestParkingLotData(completionHandler: @escaping () -> Void) {
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 120) {
-//            let url = "http://api.data.go.kr/openapi/tn_pubr_prkplce_info_api?serviceKey=\(self.serviceKey)&pageNo=0&numOfRows=\(self.numOfRows)&type=xml"
-//            guard let xmlParser = XMLParser(contentsOf: URL(string: url)!) else { return }
-//
-//            xmlParser.delegate = self;
-//            xmlParser.parse()
-//
-//            completionHandler()
-//        }
-//    }
     private func requestParkingLotData() {
-        let url = URL(string: "http://api.data.go.kr/openapi/tn_pubr_prkplce_info_api?serviceKey=\(self.serviceKey)&pageNo=0&numOfRows=\(self.numOfRows)&type=xml")!
+        let url = URL(string: "http://api.data.go.kr/openapi/tn_pubr_prkplce_info_api?serviceKey=\(serviceKey)&pageNo=0&numOfRows=\(numOfRows)&type=xml")!
         
         let dataTask = URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
@@ -118,7 +107,7 @@ extension LoadingViewController {
     
     private func showLoginViewController() {
         let LoginViewController = LoginViewController(parkingLots: parkingLots)
-        self.navigationController?.pushViewController(LoginViewController, animated: true)
+        navigationController?.pushViewController(LoginViewController, animated: true)
     }
 }
 

@@ -13,6 +13,8 @@ class MapViewController: UIViewController {
     var mapView = NMFMapView(frame: CGRect())
     let locationManager = CLLocationManager()
     
+    var infoViewController = InfoViewController(parkingLot: nil, mapViewController: nil)
+    
     var lat: Double = 0
     var lng: Double = 0
     
@@ -50,7 +52,7 @@ class MapViewController: UIViewController {
         }
         
         showOverlay()
-        showNearParkingLots(nearParkingLots: findNearParkingLot(lat: lat, lng: lng, range: 0.01))
+        showNearParkingLots(nearParkingLots: findNearParkingLot(lat: lat, lng: lng, range: 0.03))
         
         mapView.touchDelegate = self
         mapView.addCameraDelegate(delegate: self)
@@ -70,13 +72,13 @@ class MapViewController: UIViewController {
 
 extension MapViewController: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-
+        
     }
 }
 
 extension MapViewController: NMFMapViewTouchDelegate {
     func mapView(_ mapView: NMFMapView, didTapMap latlng: NMGLatLng, point: CGPoint) {
-        print("\(latlng.lat), \(latlng.lng)")
+        infoViewController.dismiss()
     }
 }
 
@@ -87,20 +89,18 @@ extension MapViewController: NMFMapViewCameraDelegate {
         deleteMarkers()
         showNearParkingLots(nearParkingLots: findNearParkingLot(lat: cameraPosition.target.lat,
                                                                 lng: cameraPosition.target.lng,
-                                                                range: 0.01))
+                                                                range: 0.03))
     }
 }
 
 extension MapViewController {
     private func showOverlay() {
-        let locationOverlay = self.mapView.locationOverlay
+        let locationOverlay = mapView.locationOverlay
 
         locationOverlay.hidden = false
         locationOverlay.location = NMGLatLng(
-            lat: locationManager.location?.coordinate.latitude ?? 0,
-            lng: locationManager.location?.coordinate.longitude ?? 0)
-//            lat: 36,
-//            lng: 127)
+            lat: lat,
+            lng: lng)
         
         locationOverlay.iconWidth = 100
         locationOverlay.iconHeight = 100
@@ -144,20 +144,49 @@ extension MapViewController {
             marker.width = 30
             marker.height = 30
             
-            marker.captionText = parkingLot.name + parkingLot.type + "주차장"
+            marker.captionText = parkingLotRename(parkingLot: parkingLot)
             marker.isHideCollidedMarkers = true
             
-            marker.mapView = self.mapView
-            self.markers.append(marker)
+            marker.touchHandler = { (overlay: NMFOverlay) -> Bool in
+                self.infoViewController.dismiss()
+                
+                self.infoViewController = InfoViewController(parkingLot: parkingLot, mapViewController: self)
+                self.infoViewController.view.backgroundColor = .white
+                self.infoViewController.modalPresentationStyle = .pageSheet
+                
+                if let sheet = self.infoViewController.sheetPresentationController {
+                    sheet.detents = [.medium()]
+                    sheet.prefersGrabberVisible = false
+
+                    sheet.largestUndimmedDetentIdentifier = .medium
+                }
+
+                self.present(self.infoViewController, animated: true, completion: nil)
+                
+                return true
+            }
+            
+            marker.mapView = mapView
+            markers.append(marker)
         }
-        print(mapView.self)
     }
     
     private func deleteMarkers() {
-        for marker in self.markers {
+        for marker in markers {
             marker.mapView = nil
         }
         
-        self.markers = []
+        markers = []
+    }
+    
+    func parkingLotRename(parkingLot: item?) -> String {
+        guard let parkingLot = parkingLot else { return "" }
+        
+        var name = parkingLot.name
+        
+        if !name.contains("공영") && !name.contains("민영") { name += parkingLot.type }
+        if !name.contains("주차장") { name += "주차장" }
+        
+        return name
     }
 }
