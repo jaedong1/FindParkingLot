@@ -11,7 +11,7 @@ import Alamofire
 
 class LoadingViewController: UIViewController {
     var parkingLots: [item] = []
-    var currentItem = item(name: "", type: "", address: "", phoneNumber: "", lat: "", lng: "")
+    var currentItem = item()
     
     private let xmlParser = XMLParser()
     private var currentElement = ""
@@ -130,11 +130,19 @@ extension LoadingViewController: XMLParserDelegate {
             break
         case "rdnmadr": currentItem.address = string
             break
-        case "phoneNumber": currentItem.phoneNumber = string
-            break
         case "latitude": currentItem.lat = string
             break
         case "longitude": currentItem.lng = string
+            break
+        case "parkingchrgeInfo": currentItem.isFree = string
+            break
+        case "basicTime": currentItem.basicTime = string
+            break
+        case "basicCharge": currentItem.basicCharge = string
+            break
+        case "addUnitTime": currentItem.addUnitTime = string
+            break
+        case "addUnitCharge": currentItem.addUnitCharge = string
             break
         default:
             break

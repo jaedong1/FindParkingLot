@@ -21,15 +21,19 @@ class MapViewController: UIViewController {
     let parkingLots: [item]
     var markers = [NMFMarker()]
     
+    private lazy var searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        
+        return searchBar
+    }()
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        layout()
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
-        
-        mapView = NMFMapView(frame: view.frame)
-        view.addSubview(mapView)
         
         if CLLocationManager.locationServicesEnabled() {
             print("위치 서비스 on")
@@ -94,6 +98,19 @@ extension MapViewController: NMFMapViewCameraDelegate {
 }
 
 extension MapViewController {
+    private func layout() {
+        mapView = NMFMapView(frame: view.frame)
+        [
+            mapView,
+            searchBar
+        ].forEach { view.addSubview($0) }
+        
+        searchBar.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(25)
+            $0.centerX.equalToSuperview()
+        }
+    }
+    
     private func showOverlay() {
         let locationOverlay = mapView.locationOverlay
 

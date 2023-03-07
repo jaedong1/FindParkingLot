@@ -36,7 +36,48 @@ class InfoViewController: UIViewController {
         return label
     }()
     
-    private lazy var stackView: UIStackView = {
+    private lazy var imageStackView: UIStackView = {
+        let stackView = UIStackView()
+        
+        stackView.axis = .vertical
+        stackView.spacing = 10
+        stackView.alignment = .leading
+        stackView.distribution = .fill
+        
+        return stackView
+    }()
+    
+    private lazy var typeImage: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: "ellipsis.circle")?
+            .withTintColor(.lightGray, renderingMode: .alwaysOriginal))
+        
+        imageView.contentMode = .scaleAspectFit
+        imageView.heightAnchor.constraint(equalToConstant: 18).isActive = true
+        
+        return imageView
+    }()
+    
+    private lazy var addressImage: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: "map")?
+            .withTintColor(.lightGray, renderingMode: .alwaysOriginal))
+        
+        imageView.contentMode = .scaleAspectFit
+        imageView.heightAnchor.constraint(equalToConstant: 18).isActive = true
+        
+        return imageView
+    }()
+    
+    private lazy var priceImage: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: "wonsign")?
+            .withTintColor(.lightGray, renderingMode: .alwaysOriginal))
+        
+        imageView.contentMode = .scaleAspectFit
+        imageView.heightAnchor.constraint(equalToConstant: 18).isActive = true
+        
+        return imageView
+    }()
+    
+    private lazy var labelStackView: UIStackView = {
         let stackView = UIStackView()
         
         stackView.axis = .vertical
@@ -53,7 +94,7 @@ class InfoViewController: UIViewController {
         label.numberOfLines = 0
         label.textColor = .black
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 15, weight: .semibold)
+        label.font = .systemFont(ofSize: 15, weight: .regular)
         
         return label
     }()
@@ -64,18 +105,62 @@ class InfoViewController: UIViewController {
         label.numberOfLines = 0
         label.textColor = .black
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 15, weight: .semibold)
+        label.font = .systemFont(ofSize: 15, weight: .regular)
         
         return label
     }()
     
-    private lazy var phoneNumberLabel: UILabel = {
+    private lazy var isFreeLabel: UILabel = {
         let label = UILabel()
         
         label.numberOfLines = 0
         label.textColor = .black
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 15, weight: .semibold)
+        label.font = .systemFont(ofSize: 15, weight: .regular)
+        
+        return label
+    }()
+    
+    private lazy var basicTimeLabel: UILabel = {
+        let label = UILabel()
+        
+        label.numberOfLines = 0
+        label.textColor = .black
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 15, weight: .regular)
+        
+        return label
+    }()
+    
+    private lazy var basicChargeLabel: UILabel = {
+        let label = UILabel()
+        
+        label.numberOfLines = 0
+        label.textColor = .black
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 15, weight: .regular)
+        
+        return label
+    }()
+    
+    private lazy var addUnitTimeLabel: UILabel = {
+        let label = UILabel()
+        
+        label.numberOfLines = 0
+        label.textColor = .black
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 15, weight: .regular)
+        
+        return label
+    }()
+    
+    private lazy var addUnitChargeLabel: UILabel = {
+        let label = UILabel()
+        
+        label.numberOfLines = 0
+        label.textColor = .black
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 15, weight: .regular)
         
         return label
     }()
@@ -89,10 +174,20 @@ class InfoViewController: UIViewController {
     init(parkingLot: item?, mapViewController: MapViewController?) {
         super.init(nibName: nil, bundle: nil)
         
-        nameLabel.text = mapViewController?.parkingLotRename(parkingLot: parkingLot) ?? ""
-        typeLabel.text = parkingLot?.type
-        addressLabel.text = parkingLot?.address
-        phoneNumberLabel.text = parkingLot?.phoneNumber
+        guard let parkingLot = parkingLot else { return }
+        guard let mapViewController = mapViewController else { return }
+        
+        nameLabel.text = mapViewController.parkingLotRename(parkingLot: parkingLot)
+        typeLabel.text = parkingLot.type
+        addressLabel.text = parkingLot.address
+        isFreeLabel.text = parkingLot.isFree
+        
+        if isFreeLabel.text == "유료" {
+            basicTimeLabel.text = "주차 기본 시간 : " + parkingLot.basicTime + "분"
+            basicChargeLabel.text = "주차 기본 요금 : " + parkingLot.basicCharge + "원"
+            addUnitTimeLabel.text = "추가 단위 시간 : " + parkingLot.addUnitTime + "분"
+            addUnitChargeLabel.text = "추가 단위 요금 : " + parkingLot.addUnitCharge + "원"
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -101,6 +196,10 @@ class InfoViewController: UIViewController {
 }
 
 extension InfoViewController {
+    func dismiss() {
+        dismiss(animated: true)
+    }
+    
     @objc
     private func dismissButtonTapped() {
         dismiss()
@@ -108,15 +207,26 @@ extension InfoViewController {
     
     private func layout() {
         [
+            typeImage,
+            addressImage,
+            priceImage
+        ].forEach { imageStackView.addArrangedSubview($0) }
+        
+        [
             typeLabel,
             addressLabel,
-            phoneNumberLabel
-        ].forEach { stackView.addArrangedSubview($0) }
+            isFreeLabel,
+            basicTimeLabel,
+            basicChargeLabel,
+            addUnitTimeLabel,
+            addUnitChargeLabel
+        ].forEach { labelStackView.addArrangedSubview($0) }
         
         [
             dismissButton,
             nameLabel,
-            stackView
+            imageStackView,
+            labelStackView
         ].forEach { view.addSubview($0) }
         
         dismissButton.snp.makeConstraints {
@@ -126,16 +236,17 @@ extension InfoViewController {
         
         nameLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(dismissButton.snp.bottom)
+            $0.top.equalTo(dismissButton.snp.bottom).offset(10)
         }
         
-        stackView.snp.makeConstraints {
+        imageStackView.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(25)
-            $0.top.equalTo(nameLabel.snp.bottom).offset(100)
+            $0.top.equalTo(nameLabel.snp.bottom).offset(50)
         }
-    }
-    
-    func dismiss() {
-        dismiss(animated: true)
+        
+        labelStackView.snp.makeConstraints {
+            $0.leading.equalTo(imageStackView.snp.trailing).offset(15)
+            $0.top.equalTo(imageStackView.snp.top)
+        }
     }
 }
