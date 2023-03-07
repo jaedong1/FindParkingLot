@@ -10,8 +10,14 @@ import NMapsMap
 import CoreLocation
 
 class MapViewController: UIViewController {
-    var locationManager = CLLocationManager()
+    var mapView = NMFMapView(frame: CGRect())
+    let locationManager = CLLocationManager()
+    
+    var lat: Double = 0
+    var lng: Double = 0
+    
     let parkingLots: [item]
+    var markers = [NMFMarker()]
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -20,20 +26,22 @@ class MapViewController: UIViewController {
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         
-        let mapView = NMFMapView(frame: view.frame)
+        mapView = NMFMapView(frame: view.frame)
         view.addSubview(mapView)
         
         if CLLocationManager.locationServicesEnabled() {
             print("위치 서비스 on")
             self.locationManager.startUpdatingLocation()
-            print(self.locationManager.location?.coordinate ?? 0)
+            
+//            lat = self.locationManager.location?.coordinate.latitude ?? 0
+//            lng = self.locationManager.location?.coordinate.longitude ?? 0
+            lat = 37.5670135
+            lng = 126.9783740
 
             let cameraUpdate = NMFCameraUpdate(
                 scrollTo: NMGLatLng(
-                        lat: self.locationManager.location?.coordinate.latitude ?? 0,
-                        lng: self.locationManager.location?.coordinate.longitude ?? 0))
-//                    lat: 36,
-//                    lng: 127))
+                    lat: lat,
+                    lng: lng))
             
             cameraUpdate.animation = .easeIn
             mapView.moveCamera(cameraUpdate)
@@ -41,9 +49,8 @@ class MapViewController: UIViewController {
             print("위치 서비스 off")
         }
         
-        showOverlay(mapView: mapView)
-        //showNearParkingLots(mapView: mapView, nearParkingLots: findNearParkingLot(range: 0.01))
-        showNearParkingLots(mapView: mapView, nearParkingLots: findNearParkingLot(range: 0.03))
+        showOverlay()
+        showNearParkingLots(nearParkingLots: findNearParkingLot(lat: lat, lng: lng, range: 0.01))
         
         mapView.touchDelegate = self
         mapView.addCameraDelegate(delegate: self)
@@ -75,18 +82,33 @@ extension MapViewController: NMFMapViewTouchDelegate {
 
 extension MapViewController: NMFMapViewCameraDelegate {
     func mapView(_ mapView: NMFMapView, cameraDidChangeByReason reason: Int, animated: Bool) {
-        <#code#>
+        let cameraPosition = mapView.cameraPosition
+        
+        deleteMarkers()
+        showNearParkingLots(nearParkingLots: findNearParkingLot(lat: cameraPosition.target.lat,
+                                                                lng: cameraPosition.target.lng,
+                                                                range: 0.01))
     }
 }
 
 extension MapViewController {
-    private func findNearParkingLot(range: Double) -> [item] {
-        guard let lat = self.locationManager.location?.coordinate.latitude else { return [] }
-        guard let lng = self.locationManager.location?.coordinate.longitude else { return [] }
-        
-//        let lat = 36.0
-//        let lng = 127.0
+    private func showOverlay() {
+        let locationOverlay = self.mapView.locationOverlay
 
+        locationOverlay.hidden = false
+        locationOverlay.location = NMGLatLng(
+            lat: locationManager.location?.coordinate.latitude ?? 0,
+            lng: locationManager.location?.coordinate.longitude ?? 0)
+//            lat: 36,
+//            lng: 127)
+        
+        locationOverlay.iconWidth = 100
+        locationOverlay.iconHeight = 100
+
+        //locationOverlay.circleRadius = 50
+    }
+    
+    private func findNearParkingLot(lat: Double, lng: Double, range: Double) -> [item] {
         var nearParkingLots: [item] = []
         
         for parkingLot in parkingLots {
@@ -110,9 +132,7 @@ extension MapViewController {
         return nearParkingLots
     }
     
-    private func showNearParkingLots(mapView: NMFMapView, nearParkingLots: [item]) {
-        var markers = [NMFMarker()]
-        
+    private func showNearParkingLots(nearParkingLots: [item]) {
         for parkingLot in nearParkingLots {
             let marker = NMFMarker()
             
@@ -120,26 +140,24 @@ extension MapViewController {
                 lat: Double(parkingLot.lat)!,
                 lng: Double(parkingLot.lng)!)
             
-            marker.captionText = parkingLot.name + parkingLot.type + "주차장"
-            marker.mapView = mapView
+            marker.iconImage = NMFOverlayImage(name: "parkingLot_icon")
+            marker.width = 30
+            marker.height = 30
             
-            markers.append(marker)
+            marker.captionText = parkingLot.name + parkingLot.type + "주차장"
+            marker.isHideCollidedMarkers = true
+            
+            marker.mapView = self.mapView
+            self.markers.append(marker)
         }
+        print(mapView.self)
     }
     
-    private func showOverlay(mapView: NMFMapView) {
-        let locationOverlay = mapView.locationOverlay
-
-        locationOverlay.hidden = false
-        locationOverlay.location = NMGLatLng(
-            lat: locationManager.location?.coordinate.latitude ?? 0,
-            lng: locationManager.location?.coordinate.longitude ?? 0)
-//            lat: 36,
-//            lng: 127)
+    private func deleteMarkers() {
+        for marker in self.markers {
+            marker.mapView = nil
+        }
         
-        locationOverlay.iconWidth = 100
-        locationOverlay.iconHeight = 100
-
-        //locationOverlay.circleRadius = 50
+        self.markers = []
     }
 }
