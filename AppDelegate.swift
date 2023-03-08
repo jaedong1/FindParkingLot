@@ -26,6 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         KakaoSDK.initSDK(appKey: "d5a03e8cf83011419da06a060996c185")
         
+        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).defaultTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+        
         return true
     }
 

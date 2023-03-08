@@ -25,6 +25,8 @@ class MapViewController: UIViewController {
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
+        
+        tableView.backgroundColor = .white
         tableView.dataSource = self
         tableView.delegate = self
         tableView.isHidden = true
@@ -44,6 +46,8 @@ class MapViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        view.backgroundColor = .white
         
         setNavigationItems()
         layout()
@@ -104,6 +108,8 @@ extension MapViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let parkingLot = searchResults[indexPath.row]
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "Cell")
+        
+        cell.backgroundColor = .white
         
         cell.textLabel?.text = MapViewController.parkingLotRename(parkingLot: parkingLot)
         cell.detailTextLabel?.text = parkingLot.address
@@ -179,7 +185,12 @@ extension MapViewController {
     }
     
     private func setNavigationItems() {
-        navigationController?.title = "주변 주차장 찾기"
+        let appearance = UINavigationBarAppearance()
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
+        
+        navigationItem.standardAppearance = appearance
+        navigationItem.title = "주변 주차장 찾기"
+        
         navigationController?.navigationBar.isHidden = false
         navigationController?.navigationBar.isTranslucent = false
         navigationController?.view.backgroundColor = .white
@@ -187,10 +198,14 @@ extension MapViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem()
 
         let searchController = UISearchController()
-        searchController.searchBar.placeholder = "주차장 정보를 입력하여 검색하세요."
-        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: "주차장 정보를 입력하여 검색하세요.",
+                                                                                              attributes: [.foregroundColor: UIColor.systemGray])
+        searchController.searchBar.searchTextField.backgroundColor = .white
+        searchController.searchBar.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        searchController.searchBar.searchTextField.heightAnchor.constraint(equalToConstant: 30).isActive = true
         searchController.searchBar.delegate = self
-
+        searchController.obscuresBackgroundDuringPresentation = false
+        
         navigationItem.searchController = searchController
     }
     
@@ -309,7 +324,7 @@ extension MapViewController {
                 lng: lng))
         
         cameraUpdate.animation = .fly
-        cameraUpdate.animationDuration = 0.25
+        cameraUpdate.animationDuration = 0.5
         
         mapView.moveCamera(cameraUpdate)
     }

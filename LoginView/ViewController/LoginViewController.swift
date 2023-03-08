@@ -181,7 +181,12 @@ class LoginViewController: UIViewController {
         
         view.backgroundColor = .white
         
+        let appearance = UINavigationBarAppearance()
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
+        
+        navigationItem.standardAppearance = appearance
         navigationItem.title = "로그인"
+        
         navigationController?.navigationBar.isHidden = false
         navigationController?.navigationBar.isTranslucent = true
         navigationItem.leftBarButtonItem = UIBarButtonItem()

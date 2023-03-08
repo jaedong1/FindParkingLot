@@ -16,7 +16,7 @@ class EmailViewController: UIViewController {
         let stackView = UIStackView()
         
         stackView.axis = .vertical
-        stackView.spacing = 25
+        stackView.spacing = 10
         stackView.alignment = .leading
         stackView.distribution = .fillEqually
         
@@ -40,14 +40,22 @@ class EmailViewController: UIViewController {
         textField.keyboardType = .emailAddress
         
         textField.delegate = self
-        textField.becomeFirstResponder()
+        //textField.becomeFirstResponder()
         textField.backgroundColor = .white
         
         textField.font = .systemFont(ofSize: 20, weight: .regular)
         textField.textColor = .black
         
+        textField.attributedPlaceholder = NSAttributedString(string: "이메일 주소를 입력하세요.", attributes: [.foregroundColor: UIColor.systemGray])
+        
+        textField.layer.cornerRadius = 5
+        textField.layer.borderWidth = 0.5
+        textField.layer.borderColor = UIColor.gray.cgColor
+        
         textField.borderStyle = .roundedRect
-        textField.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        textField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        textField.clearButtonMode = .always
         
         textField.addTarget(self, action: #selector(checkEmailAndPassword), for: .editingChanged)
         
@@ -76,8 +84,16 @@ class EmailViewController: UIViewController {
         textField.font = .systemFont(ofSize: 20, weight: .regular)
         textField.textColor = .black
         
+        textField.attributedPlaceholder = NSAttributedString(string: "비밀번호를 입력하세요.", attributes: [.foregroundColor: UIColor.systemGray])
+        
+        textField.layer.cornerRadius = 5
+        textField.layer.borderWidth = 0.5
+        textField.layer.borderColor = UIColor.gray.cgColor
+        
         textField.borderStyle = .roundedRect
-        textField.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        textField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        textField.clearButtonMode = .always
         
         textField.addTarget(self, action: #selector(checkEmailAndPassword), for: .editingChanged)
         
@@ -166,7 +182,12 @@ class EmailViewController: UIViewController {
         
         view.backgroundColor = .white
         
+        let appearance = UINavigationBarAppearance()
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
+        
+        navigationItem.standardAppearance = appearance
         navigationItem.title = "이메일로 계속하기"
+        
         navigationController?.navigationBar.isHidden = false
         navigationController?.navigationBar.isTranslucent = true
         
