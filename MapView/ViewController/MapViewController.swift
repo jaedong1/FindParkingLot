@@ -10,16 +10,18 @@ import NMapsMap
 import CoreLocation
 
 class MapViewController: UIViewController {
-    var mapView = NMFMapView(frame: CGRect())
     let locationManager = CLLocationManager()
     
+    var mapView = NMFMapView(frame: CGRect())
     var infoViewController = InfoViewController(parkingLot: nil)
     
     var lat: Double = 0
     var lng: Double = 0
     
     let parkingLots: [item]
+    var searchResults: [item] = []
     var markers = [NMFMarker()]
+    var selectedParkingLot = ""
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -58,14 +60,8 @@ class MapViewController: UIViewController {
 //            lng = self.locationManager.location?.coordinate.longitude ?? 0
             lat = 37.5670135
             lng = 126.9783740
-
-            let cameraUpdate = NMFCameraUpdate(
-                scrollTo: NMGLatLng(
-                    lat: lat,
-                    lng: lng))
             
-            cameraUpdate.animation = .easeIn
-            mapView.moveCamera(cameraUpdate)
+            moveCamera(lat: lat, lng: lng)
         } else {
             print("위치 서비스 off")
         }
@@ -92,44 +88,84 @@ extension MapViewController: NMFMapViewTouchDelegate {
 }
 
 extension MapViewController: NMFMapViewCameraDelegate {
-    func mapView(_ mapView: NMFMapView, cameraDidChangeByReason reason: Int, animated: Bool) {
-//        let cameraPosition = mapView.cameraPosition
-//
-//        deleteMarkers()
-//        showNearParkingLots(nearParkingLots: findNearParkingLot(lat: cameraPosition.target.lat,
-//                                                                lng: cameraPosition.target.lng,
-//                                                                range: 0.01))
-    }
-    
     func mapViewCameraIdle(_ mapView: NMFMapView) {
-        let cameraPosition = mapView.cameraPosition
-        
         deleteMarkers()
-        showNearParkingLots(nearParkingLots: findNearParkingLot(lat: cameraPosition.target.lat,
-                                                                lng: cameraPosition.target.lng,
+        showNearParkingLots(nearParkingLots: findNearParkingLot(lat: mapView.cameraPosition.target.lat,
+                                                                lng: mapView.cameraPosition.target.lng,
                                                                 range: 0.01))
     }
 }
 
 extension MapViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return searchResults.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
+        let parkingLot = searchResults[indexPath.row]
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "Cell")
+        
+        cell.textLabel?.text = MapViewController.parkingLotRename(parkingLot: parkingLot)
+        cell.detailTextLabel?.text = parkingLot.address
+        
+        cell.textLabel?.textColor = .black
+        cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
+        
+        cell.detailTextLabel?.textColor = .gray
+        cell.detailTextLabel?.font = .systemFont(ofSize: 15, weight: .regular)
+        
+        return cell
     }
 }
 
 extension MapViewController: UITableViewDelegate {
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let parkingLot = searchResults[indexPath.row]
+        
+        guard let lat = Double(parkingLot.lat) else { return }
+        guard let lng = Double(parkingLot.lng) else { return }
+        
+        deleteMarkers()
+        tableView.isHidden = true
+        navigationItem.searchController?.dismiss(animated: true)
+        
+        moveCamera(lat: lat, lng: lng)
+        self.showInfoView(parkingLot: parkingLot)
+        
+        selectedParkingLot = parkingLot.name
+    }
 }
 
 extension MapViewController: UISearchBarDelegate {
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        self.infoViewController.dismiss()
+        
+        tableView.isHidden = false
+        tableView.reloadData()
+    }
     
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        tableView.isHidden = true
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        searchResults = []
+        searchParkingLots(from: searchText)
+    }
 }
 
 extension MapViewController {
+    static func parkingLotRename(parkingLot: item?) -> String {
+        guard let parkingLot = parkingLot else { return "" }
+        
+        var name = parkingLot.name
+        
+        if !name.contains("공영") && !name.contains("민영") { name += parkingLot.type }
+        if !name.contains("주차장") { name += "주차장" }
+        
+        return name
+    }
+    
     private func layout() {
         mapView = NMFMapView(frame: view.frame)
         
@@ -143,6 +179,8 @@ extension MapViewController {
     }
     
     private func setNavigationItems() {
+        navigationController?.title = "주변 주차장 찾기"
+        navigationController?.navigationBar.isHidden = false
         navigationController?.navigationBar.isTranslucent = false
         navigationController?.view.backgroundColor = .white
 
@@ -152,7 +190,6 @@ extension MapViewController {
         searchController.searchBar.placeholder = "주차장 정보를 입력하여 검색하세요."
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.delegate = self
-        searchController.searchBar.sizeToFit()
 
         navigationItem.searchController = searchController
     }
@@ -167,8 +204,6 @@ extension MapViewController {
         
         locationOverlay.iconWidth = 100
         locationOverlay.iconHeight = 100
-
-        //locationOverlay.circleRadius = 50
     }
     
     private func findNearParkingLot(lat: Double, lng: Double, range: Double) -> [item] {
@@ -195,37 +230,52 @@ extension MapViewController {
         return nearParkingLots
     }
     
+    private func showInfoView(parkingLot: item) {
+        self.infoViewController.dismiss()
+        
+        self.infoViewController = InfoViewController(parkingLot: parkingLot)
+        self.infoViewController.view.backgroundColor = .white
+        self.infoViewController.modalPresentationStyle = .pageSheet
+        
+        if let sheet = self.infoViewController.sheetPresentationController {
+            sheet.detents = [.medium()]
+            sheet.prefersGrabberVisible = false
+
+            sheet.largestUndimmedDetentIdentifier = .medium
+        }
+
+        mapView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 450, right: 0) //주차장 선택 시 마커가 infoView에 가려져서 위도 보정
+        self.present(self.infoViewController, animated: true, completion: nil)
+    }
+    
     private func showNearParkingLots(nearParkingLots: [item]) {
         for parkingLot in nearParkingLots {
             let marker = NMFMarker()
             
+            let lat = Double(parkingLot.lat) ?? 0
+            let lng = Double(parkingLot.lng) ?? 0
+            
             marker.position = NMGLatLng(
-                lat: Double(parkingLot.lat)!,
-                lng: Double(parkingLot.lng)!)
+                lat: lat,
+                lng: lng)
             
             marker.iconImage = NMFOverlayImage(name: "parkingLot_icon")
             marker.width = 30
             marker.height = 30
             
-            marker.captionText = MapViewController.parkingLotRename(parkingLot: parkingLot)
             marker.isHideCollidedMarkers = true
+            marker.captionText = MapViewController.parkingLotRename(parkingLot: parkingLot)
+            
+            if parkingLot.name == selectedParkingLot {    //검색창에서 선택된 주차장 이름은 가리지 않음
+                marker.zIndex = 1
+                marker.isForceShowIcon = true
+            }
             
             marker.touchHandler = { (overlay: NMFOverlay) -> Bool in
-                self.infoViewController.dismiss()
+                self.selectedParkingLot = parkingLot.name
                 
-                self.infoViewController = InfoViewController(parkingLot: parkingLot)
-                self.infoViewController.view.backgroundColor = .white
-                self.infoViewController.modalPresentationStyle = .pageSheet
-                
-                if let sheet = self.infoViewController.sheetPresentationController {
-                    sheet.detents = [.medium()]
-                    sheet.prefersGrabberVisible = false
-
-                    sheet.largestUndimmedDetentIdentifier = .medium
-                }
-
-                self.present(self.infoViewController, animated: true, completion: nil)
-                
+                self.moveCamera(lat: lat, lng: lng)
+                self.showInfoView(parkingLot: parkingLot)
                 return true
             }
             
@@ -242,14 +292,25 @@ extension MapViewController {
         markers = []
     }
     
-    static func parkingLotRename(parkingLot: item?) -> String {
-        guard let parkingLot = parkingLot else { return "" }
+    private func searchParkingLots(from: String) {
+        for parkingLot in parkingLots {
+            if parkingLot.name.contains(from) { searchResults.append(parkingLot) }
+            else if parkingLot.address.contains(from) { searchResults.append(parkingLot) }
+            else if parkingLot.type.contains(from) { searchResults.append(parkingLot) }
+        }
         
-        var name = parkingLot.name
+        tableView.reloadData()
+    }
+    
+    private func moveCamera(lat: Double, lng: Double) {
+        let cameraUpdate = NMFCameraUpdate(
+            scrollTo: NMGLatLng(
+                lat: lat,
+                lng: lng))
         
-        if !name.contains("공영") && !name.contains("민영") { name += parkingLot.type }
-        if !name.contains("주차장") { name += "주차장" }
+        cameraUpdate.animation = .fly
+        cameraUpdate.animationDuration = 0.25
         
-        return name
+        mapView.moveCamera(cameraUpdate)
     }
 }
