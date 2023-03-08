@@ -13,7 +13,7 @@ class MapViewController: UIViewController {
     var mapView = NMFMapView(frame: CGRect())
     let locationManager = CLLocationManager()
     
-    var infoViewController = InfoViewController(parkingLot: nil, mapViewController: nil)
+    var infoViewController = InfoViewController(parkingLot: nil)
     
     var lat: Double = 0
     var lng: Double = 0
@@ -71,7 +71,7 @@ class MapViewController: UIViewController {
         }
         
         showOverlay()
-        showNearParkingLots(nearParkingLots: findNearParkingLot(lat: lat, lng: lng, range: 0.03))
+        showNearParkingLots(nearParkingLots: findNearParkingLot(lat: lat, lng: lng, range: 0.01))
         
         mapView.touchDelegate = self
         mapView.addCameraDelegate(delegate: self)
@@ -93,12 +93,21 @@ extension MapViewController: NMFMapViewTouchDelegate {
 
 extension MapViewController: NMFMapViewCameraDelegate {
     func mapView(_ mapView: NMFMapView, cameraDidChangeByReason reason: Int, animated: Bool) {
+//        let cameraPosition = mapView.cameraPosition
+//
+//        deleteMarkers()
+//        showNearParkingLots(nearParkingLots: findNearParkingLot(lat: cameraPosition.target.lat,
+//                                                                lng: cameraPosition.target.lng,
+//                                                                range: 0.01))
+    }
+    
+    func mapViewCameraIdle(_ mapView: NMFMapView) {
         let cameraPosition = mapView.cameraPosition
         
         deleteMarkers()
         showNearParkingLots(nearParkingLots: findNearParkingLot(lat: cameraPosition.target.lat,
                                                                 lng: cameraPosition.target.lng,
-                                                                range: 0.03))
+                                                                range: 0.01))
     }
 }
 
@@ -198,13 +207,13 @@ extension MapViewController {
             marker.width = 30
             marker.height = 30
             
-            marker.captionText = parkingLotRename(parkingLot: parkingLot)
+            marker.captionText = MapViewController.parkingLotRename(parkingLot: parkingLot)
             marker.isHideCollidedMarkers = true
             
             marker.touchHandler = { (overlay: NMFOverlay) -> Bool in
                 self.infoViewController.dismiss()
                 
-                self.infoViewController = InfoViewController(parkingLot: parkingLot, mapViewController: self)
+                self.infoViewController = InfoViewController(parkingLot: parkingLot)
                 self.infoViewController.view.backgroundColor = .white
                 self.infoViewController.modalPresentationStyle = .pageSheet
                 
@@ -233,7 +242,7 @@ extension MapViewController {
         markers = []
     }
     
-    func parkingLotRename(parkingLot: item?) -> String {
+    static func parkingLotRename(parkingLot: item?) -> String {
         guard let parkingLot = parkingLot else { return "" }
         
         var name = parkingLot.name

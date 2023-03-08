@@ -165,13 +165,12 @@ class InfoViewController: UIViewController {
         return label
     }()
     
-    init(parkingLot: item?, mapViewController: MapViewController?) {
+    init(parkingLot: item?) {
         super.init(nibName: nil, bundle: nil)
         
         guard let parkingLot = parkingLot else { return }
-        guard let mapViewController = mapViewController else { return }
         
-        nameLabel.text = mapViewController.parkingLotRename(parkingLot: parkingLot)
+        nameLabel.text = MapViewController.parkingLotRename(parkingLot: parkingLot)
         typeLabel.text = parkingLot.type
         addressLabel.text = parkingLot.address
         isFreeLabel.text = parkingLot.isFree
