@@ -21,14 +21,29 @@ class MapViewController: UIViewController {
     let parkingLots: [item]
     var markers = [NMFMarker()]
     
-    private lazy var searchBar: UISearchBar = {
-        let searchBar = UISearchBar()
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.isHidden = true
         
-        return searchBar
+        return tableView
     }()
+    
+    init(parkingLots: [item]) {
+        self.parkingLots = parkingLots
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        setNavigationItems()
         layout()
         
         locationManager.delegate = self
@@ -62,16 +77,6 @@ class MapViewController: UIViewController {
         mapView.addCameraDelegate(delegate: self)
         //mapView.positionMode = .direction
     }
-    
-    init(parkingLots: [item]) {
-        self.parkingLots = parkingLots
-        
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }
 
 extension MapViewController: CLLocationManagerDelegate {
@@ -97,18 +102,50 @@ extension MapViewController: NMFMapViewCameraDelegate {
     }
 }
 
+extension MapViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 10
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        return UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
+    }
+}
+
+extension MapViewController: UITableViewDelegate {
+    
+}
+
+extension MapViewController: UISearchBarDelegate {
+    
+}
+
 extension MapViewController {
     private func layout() {
         mapView = NMFMapView(frame: view.frame)
+        
         [
             mapView,
-            searchBar
+            tableView
         ].forEach { view.addSubview($0) }
         
-        searchBar.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(25)
-            $0.centerX.equalToSuperview()
-        }
+        mapView.snp.makeConstraints {$0.edges.equalToSuperview() }
+        tableView.snp.makeConstraints { $0.edges.equalToSuperview() }
+    }
+    
+    private func setNavigationItems() {
+        navigationController?.navigationBar.isTranslucent = false
+        navigationController?.view.backgroundColor = .white
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem()
+
+        let searchController = UISearchController()
+        searchController.searchBar.placeholder = "주차장 정보를 입력하여 검색하세요."
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.delegate = self
+        searchController.searchBar.sizeToFit()
+
+        navigationItem.searchController = searchController
     }
     
     private func showOverlay() {

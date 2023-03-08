@@ -52,6 +52,10 @@ class LoadingViewController: UIViewController {
         
         view.backgroundColor = .white
         
+        navigationItem.title = "주변 주차장 찾기"
+        navigationController?.navigationBar.isHidden = false
+        navigationController?.navigationBar.isTranslucent = true
+        
         [
             LoadingIndicatorView,
             descriptionLabel
@@ -65,7 +69,7 @@ class LoadingViewController: UIViewController {
 extension LoadingViewController {
     private func layout() {
         LoadingIndicatorView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(250)
+            $0.top.equalToSuperview().offset(350)
             $0.centerX.equalToSuperview()
         }
         

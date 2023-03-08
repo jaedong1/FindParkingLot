@@ -28,10 +28,10 @@ class LoginViewController: UIViewController {
     }()
     
     private lazy var parkingIcon: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "logo_parkingLot"))
+        let imageView = UIImageView(image: UIImage(named: "parkingLot_icon"))
         
         imageView.contentMode = .scaleAspectFit
-        imageView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 60).isActive = true
         
         return imageView
     }()
@@ -170,9 +170,6 @@ class LoginViewController: UIViewController {
         self.parkingLots = parkingLots
         
         super.init(nibName: nil, bundle: nil)
-        
-        attribute()
-        layout()
     }
     
     required init?(coder: NSCoder) {
@@ -183,7 +180,14 @@ class LoginViewController: UIViewController {
         super.viewWillAppear(animated)
         
         view.backgroundColor = .white
-        navigationController?.navigationBar.isHidden = true
+        
+        navigationItem.title = "로그인"
+        navigationController?.navigationBar.isHidden = false
+        navigationController?.navigationBar.isTranslucent = true
+        navigationItem.leftBarButtonItem = UIBarButtonItem()
+        
+        attribute()
+        layout()
     }
 }
 
@@ -284,7 +288,7 @@ extension LoginViewController {
         
         infoStackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(225)
+            $0.top.equalToSuperview().offset(200)
             $0.leading.equalToSuperview()
         }
         

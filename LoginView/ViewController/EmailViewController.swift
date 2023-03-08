@@ -155,24 +155,23 @@ class EmailViewController: UIViewController {
         self.parkingLots = parkingLots
         
         super.init(nibName: nil, bundle: nil)
-        
-        attribute()
-        layout()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         view.backgroundColor = .white
+        
+        navigationItem.title = "이메일로 계속하기"
         navigationController?.navigationBar.isHidden = false
+        navigationController?.navigationBar.isTranslucent = true
+        
+        attribute()
+        layout()
     }
     
     func bind(_ viewModel: EmailViewModel) {

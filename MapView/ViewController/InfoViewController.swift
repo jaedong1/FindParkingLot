@@ -165,12 +165,6 @@ class InfoViewController: UIViewController {
         return label
     }()
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        layout()
-    }
-    
     init(parkingLot: item?, mapViewController: MapViewController?) {
         super.init(nibName: nil, bundle: nil)
         
@@ -182,7 +176,7 @@ class InfoViewController: UIViewController {
         addressLabel.text = parkingLot.address
         isFreeLabel.text = parkingLot.isFree
         
-        if isFreeLabel.text == "유료" {
+        if isFreeLabel.text != "무료" {
             basicTimeLabel.text = "주차 기본 시간 : " + parkingLot.basicTime + "분"
             basicChargeLabel.text = "주차 기본 요금 : " + parkingLot.basicCharge + "원"
             addUnitTimeLabel.text = "추가 단위 시간 : " + parkingLot.addUnitTime + "분"
@@ -192,6 +186,12 @@ class InfoViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        layout()
     }
 }
 
