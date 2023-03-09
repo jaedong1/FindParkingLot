@@ -139,6 +139,8 @@ extension LoadingViewController: XMLParserDelegate {
             break
         case "rdnmadr": currentItem.address = string
             break
+        case "lnmadr": currentItem.oldAddress = string
+            break
         case "latitude": currentItem.lat = string
             break
         case "longitude": currentItem.lng = string

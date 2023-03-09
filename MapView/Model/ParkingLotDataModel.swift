@@ -11,6 +11,7 @@ struct item: Decodable {
     var name: String
     var type: String
     var address: String
+    var oldAddress: String
     var lat: String
     var lng: String
     var isFree: String
@@ -23,6 +24,7 @@ struct item: Decodable {
         case name = "prkplceNm"
         case type = "prkplceSe"
         case address = "rdnmadr"
+        case oldAddress = "lnmadr"
         case lat = "latitude"
         case lng = "longitude"
         case isFree = "parkingchrgeInfo"
@@ -33,6 +35,7 @@ struct item: Decodable {
         name = ""
         type = ""
         address = ""
+        oldAddress = ""
         lat = ""
         lng = ""
         isFree = ""

@@ -197,6 +197,7 @@ class InfoViewController: UIViewController {
 extension InfoViewController {
     func dismiss() {
         dismiss(animated: true)
+        MapViewController.setCameraCenter(bottom: 0)
     }
     
     @objc
